@@ -1,0 +1,9 @@
+include ':library-project'
+include ':library-system'
+include ':library-wechat'
+include ':library-square'
+include ':library-network'
+include ':library-home'
+include ':library-base'
+include ':app'
+rootProject.name = "ARouterJavaWanAndroid"
