@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.module.BaseLoadMoreModule;
 import com.dbz.base.BaseFragment;
 import com.dbz.base.ScrollToTop;
 import com.dbz.base.config.RouterFragmentPath;
@@ -14,6 +16,7 @@ import com.dbz.square.databinding.FragmentSquareBinding;
 @Route(path = RouterFragmentPath.Square.PAGER_SQUARE)
 public class SquareFragment extends BaseFragment<FragmentSquareBinding, SquareViewModel> implements ScrollToTop {
 
+    private BaseLoadMoreModule loadMoreModule;
     private SquareAdapter mAdapter;
     private int page = 0;
 
@@ -38,35 +41,58 @@ public class SquareFragment extends BaseFragment<FragmentSquareBinding, SquareVi
         mAdapter = new SquareAdapter(R.layout.item_square);
         binding.recyclerView.setAdapter(mAdapter);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        loadMoreModule = mAdapter.getLoadMoreModule();
+        mAdapter.setAnimationFirstOnly(true);
+        mAdapter.setAnimationWithDefault(BaseQuickAdapter.AnimationType.ScaleIn);
+        loadMoreModule.setOnLoadMoreListener(() -> {
+            page++;
+            mViewModel.getSquareModel(page);
+        });
         binding.refreshLayout.setOnRefreshListener(refreshLayout -> {
             page = 0;
-            mViewModel.getSquareModel(page, true);
+            mViewModel.getSquareModel(page);
         });
-        binding.refreshLayout.setOnLoadMoreListener(refreshLayout -> {
-            page++;
-            mViewModel.getSquareModel(page, false);
-        });
-        mViewModel.mErrorMsg.observe(this, this::showFailure);
-        mViewModel.mDataBean.observe(this, dataBeans -> {
-            if (dataBeans.isRefresh()){
-                if (dataBeans.getData().getDatas().size() == 0){
+        binding.refreshLayout.setEnableLoadMore(false);
+        mViewModel.mDataBeans.observe(this, dataBeans -> {
+            if (dataBeans.getCurPage() == 1){
+                if (dataBeans.getDatas().size() == 0) {
                     showEmpty();
+                }
+                if (dataBeans.getDatas().size() > 0){
+                    mAdapter.setList(dataBeans.getDatas());
+                    showContent();
                 }
                 binding.refreshLayout.finishRefresh(true);
             } else {
-                binding.refreshLayout.finishLoadMore(true);
-            }
-            if (dataBeans.getData().getDatas().size() > 0){
-                mAdapter.setList(dataBeans.getData().getDatas());
-                showContent();
+                if (dataBeans.getDatas().size() > 0){
+                    mAdapter.addData(dataBeans.getDatas());
+                    showContent();
+                    loadMoreModule.loadMoreComplete();
+                } else {
+                    loadMoreModule.loadMoreEnd();
+                }
             }
         });
+//        mViewModel.mDataBean.observe(this, dataBeans -> {
+//            if (dataBeans.isRefresh()) {
+//                if (dataBeans.getData().getDatas().size() == 0) {
+//                    showEmpty();
+//                }
+//                binding.refreshLayout.finishRefresh(true);
+//            } else {
+//                loadMoreModule.loadMoreComplete();
+//            }
+//            if (dataBeans.getData().getDatas().size() > 0) {
+//                mAdapter.setList(dataBeans.getData().getDatas());
+//                showContent();
+//            }
+//        });
     }
 
     @Override
     protected void initData() {
         showLoading();
-        mViewModel.getSquareModel(page, true);
+        mViewModel.getSquareModel(page);
     }
 
     @Override

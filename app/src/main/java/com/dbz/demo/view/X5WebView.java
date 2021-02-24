@@ -2,6 +2,8 @@ package com.dbz.demo.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -51,9 +53,24 @@ public class X5WebView extends WebView {
         /**
          * 防止加载网页时调起系统浏览器
          */
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            view.loadUrl(url);
-            return true;
+//        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+//            view.loadUrl(url);
+//            return true;
+//        }
+
+        @Override
+        public boolean shouldOverrideUrlLoading(final WebView view, String url) {
+            try {
+                if (url.startsWith("http:") || url.startsWith("https:")) {
+                    view.loadUrl(url);
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    getContext().startActivity(intent);
+                }
+                return true;
+            } catch (Exception e){
+                return false;
+            }
         }
 
         @Override

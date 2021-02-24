@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white_color">
+        android:background="@color/viewBackground">
 
         <TextView
             android:id="@+id/tv_title"
@@ -22,6 +22,7 @@
             android:layout_marginStart="13dp"
             android:gravity="center_vertical"
             android:text="@{viewmodel.name}"
+            android:textColor="@color/item_title"
             android:textSize="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

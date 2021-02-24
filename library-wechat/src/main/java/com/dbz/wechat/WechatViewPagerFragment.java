@@ -6,10 +6,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.module.BaseLoadMoreModule;
 import com.dbz.base.BaseFragment;
 import com.dbz.base.ScrollToTop;
 import com.dbz.base.config.RouterFragmentPath;
-import com.dbz.network.retrofit.utils.LogUtils;
 import com.dbz.wechat.adapter.WechatAdapter;
 import com.dbz.wechat.databinding.ViewpagerFragmentBinding;
 import com.dbz.wechat.viewmodel.WechatViewPagerViewModel;
@@ -17,8 +18,9 @@ import com.dbz.wechat.viewmodel.WechatViewPagerViewModel;
 @Route(path = RouterFragmentPath.Wechat.PAGER_INSIDE)
 public class WechatViewPagerFragment extends BaseFragment<ViewpagerFragmentBinding, WechatViewPagerViewModel> implements ScrollToTop {
 
+    private BaseLoadMoreModule loadMoreModule;
     private WechatAdapter mAdapter;
-    private int id, page;
+    private int id, page = 1;
 
     @Override
     protected int getBindingVariable() {
@@ -44,37 +46,45 @@ public class WechatViewPagerFragment extends BaseFragment<ViewpagerFragmentBindi
         mAdapter = new WechatAdapter(R.layout.item_fragment_pager);
         binding.recyclerView.setAdapter(mAdapter);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        binding.refreshLayout.setOnRefreshListener(refreshLayout -> {
-            page = 0;
-            mViewModel.getUserArticleJson(id, page, true);
-        });
-        binding.refreshLayout.setOnLoadMoreListener(refreshLayout -> {
+        loadMoreModule = mAdapter.getLoadMoreModule();
+        loadMoreModule.setOnLoadMoreListener(() -> {
             page++;
-            mViewModel.getUserArticleJson(id, page, false);
+            mViewModel.getUserArticleJson(id, page);
         });
+        mAdapter.setAnimationFirstOnly(true);
+        mAdapter.setAnimationWithDefault(BaseQuickAdapter.AnimationType.ScaleIn);
+        binding.refreshLayout.setOnRefreshListener(refreshLayout -> {
+            page = 1;
+            mViewModel.getUserArticleJson(id, page);
+        });
+        binding.refreshLayout.setEnableLoadMore(false);
         mViewModel.mDataBean.observe(this, datasBeans -> {
-            if (datasBeans.getData().getCurPage() == 0){
-                if (datasBeans.getData().getDatas().size() == 0){
+            if (datasBeans.getCurPage() == 1){
+                if (datasBeans.getDatas().size() == 0){
                     showEmpty();
                 }
-                if (datasBeans.getData().getDatas().size() > 0){
-                    mAdapter.setList(datasBeans.getData().getDatas());
+                if (datasBeans.getDatas().size() > 0){
+                    mAdapter.setList(datasBeans.getDatas());
                 }
+                showContent();
                 binding.refreshLayout.finishRefresh(true);
             } else {
-                mAdapter.addData(datasBeans.getData().getDatas());
-                binding.refreshLayout.finishLoadMore(true);
+                if (datasBeans.getDatas().size() > 0){
+                    mAdapter.addData(datasBeans.getDatas());
+                    loadMoreModule.loadMoreComplete();
+                } else {
+                    loadMoreModule.loadMoreEnd();
+                }
             }
-            showContent();
         });
     }
 
     @Override
     protected void initData() {
         showLoading();
-        page = 0;
+        page = 1;
         if (id != 0){
-            mViewModel.getUserArticleJson(id, page, true);
+            mViewModel.getUserArticleJson(id, page);
         } else {
             if (mViewModel.mErrorMsg.getValue() != null){
                 showFailure(mViewModel.mErrorMsg.getValue());
@@ -84,7 +94,6 @@ public class WechatViewPagerFragment extends BaseFragment<ViewpagerFragmentBindi
 
     @Override
     public void scrollToTop() {
-        LogUtils.e("--------wwwwwwwww scrollToTop");
         binding.recyclerView.smoothScrollToPosition(0);
     }
 }

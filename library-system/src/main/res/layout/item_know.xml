@@ -18,7 +18,7 @@
         android:clickable="true"
         android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
-        app:cardBackgroundColor="@color/white_color"
+        app:cardBackgroundColor="@color/viewBackground"
         app:cardCornerRadius="1dp"
         app:cardElevation="1dp">
 
@@ -29,7 +29,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white_color"
+                android:background="@color/viewBackground"
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp">
 
@@ -60,6 +60,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:layout_toEndOf="@+id/tv_article_tag"
+                        android:textColor="@color/item_author"
                         android:text="@{!StringUtils.isEmpty(viewmodel.author) ? viewmodel.author : viewmodel.shareUser}"
                         android:textSize="13dp" />
 
@@ -71,6 +72,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_marginEnd="12dp"
                         android:gravity="end"
+                        android:textColor="@color/item_time"
                         android:text="@{viewmodel.niceShareDate}"
                         android:textSize="13dp"
                         app:layout_constraintEnd_toEndOf="parent" />
@@ -102,7 +104,7 @@
                     android:maxLines="2"
                     android:paddingEnd="12dp"
                     android:text="@{viewmodel.title}"
-                    android:textColor="@color/color_black"
+                    android:textColor="@color/item_title"
                     android:textSize="16dp"
                     app:layout_constraintStart_toEndOf="@+id/image" />
 
@@ -116,6 +118,7 @@
                     android:layout_marginTop="12dp"
                     android:layout_toEndOf="@+id/image"
                     android:gravity="center_vertical"
+                    android:textColor="@color/item_author"
                     android:text="@{viewmodel.superChapterName + '/' + viewmodel.chapterName}"
                     android:textSize="13dp" />
 
@@ -134,7 +137,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:layout_alignParentBottom="true"
-                android:background="@color/bg_color" />
+                android:background="@color/list_divider" />
 
         </RelativeLayout>
 

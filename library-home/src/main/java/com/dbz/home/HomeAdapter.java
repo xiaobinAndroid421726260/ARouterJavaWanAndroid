@@ -6,16 +6,16 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.module.LoadMoreModule;
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.dbz.base.config.RouterActivityPath;
 import com.dbz.home.databinding.ItemHomeBinding;
 import com.dbz.network.retrofit.bean.home.TopBean;
-import com.dbz.network.retrofit.utils.LogUtils;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HomeAdapter extends BaseQuickAdapter<TopBean.DataBean, BaseViewHolder> {
+public class HomeAdapter extends BaseQuickAdapter<TopBean.DataBean, BaseViewHolder> implements LoadMoreModule {
 
     public HomeAdapter(int layoutResId) {
         super(layoutResId);

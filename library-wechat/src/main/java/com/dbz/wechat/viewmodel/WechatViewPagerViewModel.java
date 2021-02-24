@@ -14,17 +14,16 @@ import java.util.List;
 
 public class WechatViewPagerViewModel extends BaseViewModel {
 
-    public final MutableLiveData<WechatFragmentBean> mDataBean = new MutableLiveData<>();
-    public final List<WechatFragmentBean.DataBean.DatasBean> datasBeans = new ArrayList<>();
+    public final MutableLiveData<WechatFragmentBean.DataBean> mDataBean = new MutableLiveData<>();
 
-    public void getUserArticleJson(int user_id, int page, boolean isRefresh) {
+    public void getUserArticleJson(int user_id, int page) {
         RetrofitFactory.getInstance()
                 .subscribe(RetrofitFactory.getInstance()
                         .create(Api.class).getUserArticleJson(user_id, page), new BaseObserver<WechatFragmentBean>() {
                     @Override
                     public void onSucceed(WechatFragmentBean result) {
                         if (result.getErrorCode() == 0) {
-                            mDataBean.setValue(result);
+                            mDataBean.setValue(result.getData());
                         } else {
                             ToastUtils.showShort(result.getErrorMsg());
                             mErrorMsg.setValue(result.getErrorMsg());

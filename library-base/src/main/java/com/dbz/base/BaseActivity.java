@@ -8,6 +8,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 
@@ -37,11 +38,13 @@ public abstract class BaseActivity<DB extends ViewDataBinding, VM extends BaseVi
 
     protected LoadService mLoadService;
 
+    private Bundle savedInstanceState;
     protected int mThemeColor;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.savedInstanceState = savedInstanceState;
         binding = DataBindingUtil.setContentView(this, getLayoutId());
         initStatusColor();
         performDataBinding();
@@ -95,7 +98,6 @@ public abstract class BaseActivity<DB extends ViewDataBinding, VM extends BaseVi
 
     }
 
-
     protected void initStatusColor() {
         if (!SPStaticUtils.getBoolean("nightMode", false)) {
             mThemeColor = SPStaticUtils.getInt("theme", R.color.colorPrimary);
@@ -137,6 +139,10 @@ public abstract class BaseActivity<DB extends ViewDataBinding, VM extends BaseVi
         ToastUtils.setGravity(Gravity.CENTER, 0, 0);
     }
 
+
+    protected Bundle getSavedInstanceState(){
+        return savedInstanceState;
+    }
 
 //    /**
 //     * 是否支持页面加载。默认不支持

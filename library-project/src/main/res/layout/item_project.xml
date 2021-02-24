@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:foreground="?attr/selectableItemBackground"
-        app:cardBackgroundColor="@color/white_color"
+        app:cardBackgroundColor="@color/viewBackground"
         app:cardCornerRadius="1dp"
         app:cardElevation="1dp">
 
@@ -52,7 +52,7 @@
                         android:ellipsize="end"
                         android:lines="1"
                         android:text="@{viewmodel.title}"
-                        android:textColor="@color/color_black"
+                        android:textColor="@color/item_title"
                         android:textSize="16dp" />
 
                     <TextView
@@ -66,7 +66,7 @@
                         android:lineSpacingExtra="2dp"
                         android:maxLines="4"
                         android:text="@{viewmodel.desc}"
-                        android:textColor="@color/color_default"
+                        android:textColor="@color/item_author"
                         android:textSize="14dp" />
 
                     <LinearLayout
@@ -82,7 +82,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@{!StringUtils.isEmpty(viewmodel.author) ? viewmodel.author : viewmodel.shareUser}"
-                            android:textColor="@color/color_default"
+                            android:textColor="@color/item_author"
                             android:textSize="12dp" />
 
                         <TextView
@@ -92,7 +92,7 @@
                             android:layout_weight="1"
                             android:gravity="end"
                             android:text="@{viewmodel.niceDate}"
-                            android:textColor="@color/color_default"
+                            android:textColor="@color/item_time"
                             android:textSize="12dp" />
 
                         <ImageView
@@ -112,7 +112,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="@color/color_bg" />
+                android:background="@color/list_divider" />
 
         </LinearLayout>
 

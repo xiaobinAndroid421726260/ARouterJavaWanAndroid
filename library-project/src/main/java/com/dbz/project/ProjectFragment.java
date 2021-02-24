@@ -71,12 +71,9 @@ public class ProjectFragment extends BaseFragment<FragmentProjectBinding, Projec
 
     @Override
     public void scrollToTop() {
-        LogUtils.e("------ffffff--scrollToTop()");
         if (mAdapter.getCount() == 0) return;
         Fragment fragment = mAdapter.getItem(binding.viewPager.getCurrentItem());
-        LogUtils.e("------ffffff--fragment = " + fragment);
         if (fragment instanceof ScrollToTop) {
-            LogUtils.e("------ffffff--fragment instanceof ScrollToTop");
             ((ScrollToTop) fragment).scrollToTop();
         }
     }

@@ -2,16 +2,20 @@ package com.dbz.demo;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.blankj.utilcode.util.SPStaticUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.dbz.base.BaseActivity;
 import com.dbz.base.ScrollToTop;
@@ -27,6 +31,16 @@ import com.dbz.wechat.WechatFragment;
 
 @Route(path = RouterActivityPath.Main.PAGER_MAIN)
 public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewModel> {
+
+    private static final String BOTTOM_INDEX = "bottom_index";
+
+    private static final int FRAGMENT_HOME = 0x01;
+    private static final int FRAGMENT_SQUARE = 0x02;
+    private static final int FRAGMENT_WECHAT = 0x03;
+    private static final int FRAGMENT_SYSTEM = 0x04;
+    private static final int FRAGMENT_PROJECT = 0x05;
+
+    private int index = FRAGMENT_HOME;
 
     private HomeFragment mHomeFragment;
     private SquareFragment mSquareFragment;
@@ -54,11 +68,16 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setTitle("WanAndroid");
         binding.toolbar.setTitleTextColor(Color.WHITE);
-        binding.toolbar.setNavigationIcon(R.drawable.logo);
+        binding.toolbar.setNavigationIcon(R.drawable.open_drawer);
         binding.toolbar.setNavigationOnClickListener(v -> mViewModel.openDrawer.setValue(true));
         initFragment();
         initNavigation();
         mViewModel.openDrawer.observe(this, aBoolean -> {
+            if (aBoolean) {
+                binding.drawerLayout.openDrawer(GravityCompat.START);
+            } else {
+                binding.drawerLayout.closeDrawer(GravityCompat.START);
+            }
         });
     }
 
@@ -68,7 +87,19 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
     }
 
     private void initFragment() {
-        setSelectedFragment(0);
+        if (getSavedInstanceState() != null) {
+            index = getSavedInstanceState().getInt(BOTTOM_INDEX);
+        }
+        setSelectedFragment(index);
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (null != outState){
+            outState.putInt(BOTTOM_INDEX, index);
+        }
     }
 
     @Override
@@ -81,15 +112,15 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
         binding.bottomNavigation.setOnNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.action_home) {
-                setSelectedFragment(0);
+                setSelectedFragment(FRAGMENT_HOME);
             } else if (id == R.id.action_square) {
-                setSelectedFragment(1);
+                setSelectedFragment(FRAGMENT_SQUARE);
             } else if (id == R.id.action_wechat) {
-                setSelectedFragment(2);
+                setSelectedFragment(FRAGMENT_WECHAT);
             } else if (id == R.id.action_system) {
-                setSelectedFragment(3);
+                setSelectedFragment(FRAGMENT_SYSTEM);
             } else if (id == R.id.action_project) {
-                setSelectedFragment(4);
+                setSelectedFragment(FRAGMENT_PROJECT);
             }
             return true;
         });
@@ -99,6 +130,65 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                 ((ScrollToTop) fragment).scrollToTop();
             }
         });
+
+        binding.navigation.setNavigationItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.nav_collect) {
+                ToastUtils.showShort("我的收藏");
+                mViewModel.openDrawer.setValue(false);
+            } else if (item.getItemId() == R.id.nav_share) {
+                ToastUtils.showShort("我的分享");
+                mViewModel.openDrawer.setValue(false);
+            } else if (item.getItemId() == R.id.nav_todo) {
+                ToastUtils.showShort("TODO");
+                mViewModel.openDrawer.setValue(false);
+            } else if (item.getItemId() == R.id.nav_night_mode) {
+                if (SPStaticUtils.getBoolean("switch_nightMode")) {
+                    SPStaticUtils.put("switch_nightMode", false);
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                } else {
+                    SPStaticUtils.put("switch_nightMode", true);
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                }
+                getWindow().setWindowAnimations(R.style.WindowAnimationFadeInOut);
+                recreate();
+            } else if (item.getItemId() == R.id.nav_setting) {
+                ARouter.getInstance().build(RouterActivityPath.Setting.PAGER_SETTING).navigation();
+                mViewModel.openDrawer.setValue(false);
+            } else if (item.getItemId() == R.id.nav_logout) {
+                ToastUtils.showShort("退出登陆");
+                mViewModel.openDrawer.setValue(false);
+            }
+            return true;
+        });
+    }
+
+    /**
+     * 重新创建实例
+     */
+    @Override
+    public void recreate() {
+        try {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            if (mHomeFragment != null) {
+                transaction.remove(mHomeFragment);
+            }
+            if (mSquareFragment != null) {
+                transaction.remove(mSquareFragment);
+            }
+            if (mWechatFragment != null) {
+                transaction.remove(mWechatFragment);
+            }
+            if (mSystemFragment != null) {
+                transaction.remove(mSystemFragment);
+            }
+            if (mProjectFragment != null) {
+                transaction.remove(mProjectFragment);
+            }
+            transaction.commitAllowingStateLoss();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        super.recreate();
     }
 
     /**
@@ -116,8 +206,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
     private void setSelectedFragment(int position) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         hideFragments(transaction);
+        index = position;
         switch (position) {
-            case 0:
+            case FRAGMENT_HOME:
                 binding.toolbar.setTitle(getResources().getString(R.string.home));
                 if (mHomeFragment == null) {
                     mHomeFragment = (HomeFragment) ARouter.getInstance().build(RouterFragmentPath.Home.PAGER_HOME).navigation();
@@ -126,7 +217,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                     transaction.show(mHomeFragment);
                 }
                 break;
-            case 1:
+            case FRAGMENT_SQUARE:
                 binding.toolbar.setTitle(getResources().getString(R.string.square));
                 if (mSquareFragment == null) {
                     mSquareFragment = (SquareFragment) ARouter.getInstance().build(RouterFragmentPath.Square.PAGER_SQUARE).navigation();
@@ -135,7 +226,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                     transaction.show(mSquareFragment);
                 }
                 break;
-            case 2:
+            case FRAGMENT_WECHAT:
                 binding.toolbar.setTitle(getResources().getString(R.string.wechat));
                 if (mWechatFragment == null) {
                     mWechatFragment = (WechatFragment) ARouter.getInstance().build(RouterFragmentPath.Wechat.PAGER_WECHER).navigation();
@@ -144,7 +235,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                     transaction.show(mWechatFragment);
                 }
                 break;
-            case 3:
+            case FRAGMENT_SYSTEM:
                 binding.toolbar.setTitle(getResources().getString(R.string.knowledge_system));
                 if (mSystemFragment == null) {
                     mSystemFragment = (SystemFragment) ARouter.getInstance().build(RouterFragmentPath.System.PAGER_SYSTEM).navigation();
@@ -153,7 +244,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                     transaction.show(mSystemFragment);
                 }
                 break;
-            case 4:
+            case FRAGMENT_PROJECT:
                 binding.toolbar.setTitle(getResources().getString(R.string.project));
                 if (mProjectFragment == null) {
                     mProjectFragment = (ProjectFragment) ARouter.getInstance().build(RouterFragmentPath.Project.PAGER_PROJECT).navigation();
@@ -195,7 +286,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_search){
+        if (item.getItemId() == R.id.action_search) {
             ToastUtils.showShort("跳转搜索");
             return true;
         }

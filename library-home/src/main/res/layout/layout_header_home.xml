@@ -9,9 +9,9 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         app:indicator_marginBottom="12dp"
-        app:indicator_normal_color="@color/color_divider"
+        app:indicator_normal_color="@color/list_divider"
         app:indicator_normal_width="8dp"
-        app:indicator_selected_color="@color/white_color"
+        app:indicator_selected_color="@color/viewBackground"
         app:indicator_selected_width="8dp"
         app:indicator_space="10dp"
         app:layout_constraintTop_toTopOf="parent"/>

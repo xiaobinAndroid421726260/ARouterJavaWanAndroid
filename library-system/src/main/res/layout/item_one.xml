@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:foreground="?attr/selectableItemBackground"
-        app:cardBackgroundColor="@color/white_color"
+        app:cardBackgroundColor="@color/viewBackground"
         app:cardCornerRadius="1dp"
         app:cardElevation="1dp">
 
@@ -53,7 +53,7 @@
                 android:id="@+id/imageView"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="10dp"
                 android:src="@drawable/ic_arrow_right_24dp" />
@@ -61,7 +61,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="@color/color_bg"
+                android:background="@color/list_divider"
                 android:layout_alignParentBottom="true"/>
 
         </RelativeLayout>

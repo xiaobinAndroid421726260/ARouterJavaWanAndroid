@@ -15,8 +15,9 @@
         android:layout_height="50dp"
         android:gravity="center"
         android:text="@{viewmodel.name}"
+        android:textColor="@{viewmodel.check ? @color/colorAccent : @color/item_chapter}"
         android:textSize="16dp"
-        android:background="@{viewmodel.check ? @color/white_color : @color/color_bg}"
+        android:background="@{viewmodel.check ? @color/vertical_tab_layout_indicator_color : @color/vertical_tab_layout_bg}"
         app:layout_constraintTop_toTopOf="parent" />
 
 </layout>

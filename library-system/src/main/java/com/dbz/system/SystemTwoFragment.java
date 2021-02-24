@@ -69,6 +69,7 @@ public class SystemTwoFragment extends BaseFragment<FragmentTwoBinding, SystemTw
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mTwoAdapter = new SystemTwoAdapter(R.layout.item_two_content_title);
         binding.recyclerView.setAdapter(mTwoAdapter);
+        mTwoAdapter.setAnimationWithDefault(BaseQuickAdapter.AnimationType.ScaleIn);
         mViewModel.mDataBean.observe(this, dataBeans -> {
             mArticlesBeans.clear();
             Observable.fromIterable(dataBeans).subscribe(new Observer<NaviBean.DataBean>() {
@@ -85,7 +86,7 @@ public class SystemTwoFragment extends BaseFragment<FragmentTwoBinding, SystemTw
 
                 @Override
                 public void onError(@NonNull Throwable e) {
-                    showFailure(e.getMessage());
+                    mViewModel.mErrorMsg.setValue(e.getMessage());
                 }
 
                 @Override

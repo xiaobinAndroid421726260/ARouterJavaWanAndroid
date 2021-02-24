@@ -6,10 +6,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.module.BaseLoadMoreModule;
 import com.dbz.base.BaseFragment;
 import com.dbz.base.ScrollToTop;
 import com.dbz.base.config.RouterFragmentPath;
-import com.dbz.network.retrofit.utils.LogUtils;
 import com.dbz.project.adapter.ProjectAdapter;
 import com.dbz.project.databinding.FragmentListBinding;
 import com.dbz.project.viewmodel.ProjectListViewModel;
@@ -17,8 +18,9 @@ import com.dbz.project.viewmodel.ProjectListViewModel;
 @Route(path = RouterFragmentPath.Project.PAGER_INSIDE)
 public class ProjectListFragment extends BaseFragment<FragmentListBinding, ProjectListViewModel> implements ScrollToTop {
 
+    private BaseLoadMoreModule loadMoreModule;
     private ProjectAdapter mAdapter;
-    private int page = 0;
+    private int page = 1;
     private int cid = 0;
 
     @Override
@@ -45,16 +47,19 @@ public class ProjectListFragment extends BaseFragment<FragmentListBinding, Proje
         mAdapter = new ProjectAdapter(R.layout.item_project);
         binding.recyclerView.setAdapter(mAdapter);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        binding.refreshLayout.setOnRefreshListener(refreshLayout -> {
-            page = 0;
-            mViewModel.getProjectCidJson(page, cid);
-        });
-        binding.refreshLayout.setOnLoadMoreListener(refreshLayout -> {
+        loadMoreModule = mAdapter.getLoadMoreModule();
+        mAdapter.setAnimationWithDefault(BaseQuickAdapter.AnimationType.ScaleIn);
+        loadMoreModule.setOnLoadMoreListener(() -> {
             page++;
             mViewModel.getProjectCidJson(page, cid);
         });
+        binding.refreshLayout.setOnRefreshListener(refreshLayout -> {
+            page = 1;
+            mViewModel.getProjectCidJson(page, cid);
+        });
+        binding.refreshLayout.setEnableLoadMore(false);
         mViewModel.mDataBean.observe(this, dataBean -> {
-            if (dataBean.getCurPage() == 0){
+            if (dataBean.getCurPage() == 1){
                 if (dataBean.getDatas().size() > 0){
                     mAdapter.setList(dataBean.getDatas());
                     showContent();
@@ -63,9 +68,12 @@ public class ProjectListFragment extends BaseFragment<FragmentListBinding, Proje
                 }
                 binding.refreshLayout.finishRefresh(true);
             } else {
-                mAdapter.addData(dataBean.getDatas());
-                binding.refreshLayout.finishLoadMore(true);
-                showContent();
+                if (dataBean.getDatas().size() > 0){
+                    mAdapter.addData(dataBean.getDatas());
+                    loadMoreModule.loadMoreComplete();
+                } else {
+                    loadMoreModule.loadMoreEnd();
+                }
             }
         });
     }
@@ -73,13 +81,12 @@ public class ProjectListFragment extends BaseFragment<FragmentListBinding, Proje
     @Override
     protected void initData() {
         showLoading();
-        page = 0;
+        page = 1;
         mViewModel.getProjectCidJson(page, cid);
     }
 
     @Override
     public void scrollToTop() {
-        LogUtils.e("---------scrollToTop()");
         binding.recyclerView.smoothScrollToPosition(0);
     }
 }

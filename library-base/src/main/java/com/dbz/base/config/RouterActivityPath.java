@@ -35,4 +35,26 @@ public class RouterActivityPath {
          */
         public static final String PAGER_KNOW = KNOW + "/know";
     }
+
+    /**
+     * SettingsActivity
+     */
+    public static class Setting {
+        private static final String SETTING = "/setting";
+        /**
+         * SettingsActivity
+         */
+        public static final String PAGER_SETTING = SETTING + "/setting";
+    }
+
+    /**
+     * ThemeActivity
+     */
+    public static class Theme {
+        private static final String THEME = "/theme";
+        /**
+         * ThemeActivity
+         */
+        public static final String PAGER_THEME = THEME + "/theme";
+    }
 }

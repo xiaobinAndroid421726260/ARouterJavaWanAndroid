@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.dbz.base.BaseFragment;
 import com.dbz.base.ScrollToTop;
 import com.dbz.system.adapter.SystemOneAdapter;
@@ -40,6 +41,7 @@ public class SystemOneFragment extends BaseFragment<FragmentOneBinding, SystemOn
         mAdapter = new SystemOneAdapter(R.layout.item_one);
         binding.recyclerView.setAdapter(mAdapter);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mAdapter.setAnimationWithDefault(BaseQuickAdapter.AnimationType.ScaleIn);
         binding.refreshLayout.setEnableLoadMore(false);
         binding.refreshLayout.setOnRefreshListener(refreshLayout -> mViewModel.getTreeJson());
         mViewModel.mDataBean.observe(this, dataBeans -> {

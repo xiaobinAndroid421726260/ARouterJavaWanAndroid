@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.module.BaseLoadMoreModule;
 import com.dbz.base.BaseFragment;
 import com.dbz.base.ScrollToTop;
 import com.dbz.base.config.RouterFragmentPath;
@@ -18,6 +20,7 @@ import com.youth.banner.indicator.CircleIndicator;
 @Route(path = RouterFragmentPath.Home.PAGER_HOME)
 public class HomeFragment extends BaseFragment<FragmentHomeBinding, HomeViewModel> implements ScrollToTop {
 
+    private BaseLoadMoreModule loadMoreModule;
     private HomeAdapter mAdapter;
     private Banner<String, BannerImageAdapter> mBanner;
     private int page = 0;
@@ -46,14 +49,18 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding, HomeViewMode
         View view = getHeaderView();
         mBanner = view.findViewById(R.id.banner);
         mBanner.setIndicator(new CircleIndicator(getActivity()));
+        loadMoreModule = mAdapter.getLoadMoreModule();
+        loadMoreModule.setOnLoadMoreListener(() -> {
+            page++;
+            mViewModel.getTopJson(page, false);
+        });
+        mAdapter.setAnimationFirstOnly(true);
+        mAdapter.setAnimationWithDefault(BaseQuickAdapter.AnimationType.ScaleIn);
         mAdapter.addHeaderView(view);
+        binding.refreshLayout.setEnableLoadMore(false);
         binding.refreshLayout.setOnRefreshListener(refreshLayout -> {
             page = 0;
             mViewModel.getBannerJson();
-        });
-        binding.refreshLayout.setOnLoadMoreListener(refreshLayout -> {
-            page++;
-            mViewModel.getTopJson(page, false);
         });
         mViewModel.mBannerUrl.observe(this, strings -> {
             if (mBanner != null) {
@@ -71,10 +78,12 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding, HomeViewMode
                 }
                 binding.refreshLayout.finishRefresh(true);
             } else {
-                binding.refreshLayout.finishLoadMore(true);
                 if (homeBean.getData().size() > 0){
                     mAdapter.addData(homeBean.getData());
                     showContent();
+                    loadMoreModule.loadMoreComplete();
+                } else {
+                    loadMoreModule.loadMoreEnd();
                 }
             }
         });

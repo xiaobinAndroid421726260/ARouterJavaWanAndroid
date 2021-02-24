@@ -1,3 +1,4 @@
+include ':library-setting'
 include ':library-project'
 include ':library-system'
 include ':library-wechat'

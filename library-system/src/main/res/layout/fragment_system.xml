@@ -13,15 +13,10 @@
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
+            style="@style/MyTabLayoutStyle"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:tabGravity="center"
-            app:tabIndicatorColor="@color/white_color"
-            app:tabIndicatorHeight="3dp"
             app:tabMode="scrollable"
-            app:tabSelectedTextColor="@color/white_color"
             app:tabTextAppearance="@style/MyTabTextAppearance"
             app:tabTextColor="?android:textColorSecondary" />
 

@@ -16,6 +16,7 @@ import com.dbz.base.loadsir.EmptyCallback;
 import com.dbz.base.loadsir.ErrorCallback;
 import com.dbz.base.loadsir.LoadingCallback;
 import com.dbz.base.viewmodel.BaseViewModel;
+import com.dbz.network.retrofit.utils.LogUtils;
 import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.core.LoadService;
 import com.kingja.loadsir.core.LoadSir;
@@ -58,6 +59,7 @@ public abstract class BaseFragment<DB extends ViewDataBinding, VM extends BaseVi
         binding.setLifecycleOwner(this);
         initView(getArguments());
         if (null != mViewModel){
+            LogUtils.e("---------null != mViewModel");
             mViewModel.mErrorMsg.observe(getViewLifecycleOwner(), this::showFailure);
         }
     }

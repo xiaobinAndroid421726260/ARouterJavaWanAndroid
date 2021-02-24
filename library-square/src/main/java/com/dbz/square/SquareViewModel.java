@@ -8,17 +8,13 @@ import com.dbz.network.retrofit.BaseObserver;
 import com.dbz.network.retrofit.RetrofitFactory;
 import com.dbz.network.retrofit.api.Api;
 import com.dbz.network.retrofit.bean.square.SquareBean;
-import com.dbz.network.retrofit.utils.LogUtils;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class SquareViewModel extends BaseViewModel {
 
-    public final MutableLiveData<SquareBean> mDataBean = new MutableLiveData<>();
-    private final List<SquareBean.DataBean.DatasBean> dataBeans = new ArrayList<>();
+    public final MutableLiveData<SquareBean.DataBean> mDataBeans = new MutableLiveData<>();
 
-    public void getSquareModel(int page, boolean isRefresh) {
+    public void getSquareModel(int page) {
         RetrofitFactory.getInstance()
                 .subscribe(RetrofitFactory.getInstance()
                         .create(Api.class)
@@ -26,15 +22,7 @@ public class SquareViewModel extends BaseViewModel {
                     @Override
                     public void onSucceed(SquareBean result) {
                         if (result.getErrorCode() == 0) {
-                            if (isRefresh) {
-                                dataBeans.clear();
-                            }
-                            dataBeans.addAll(result.getData().getDatas());
-                            SquareBean squareBean = new SquareBean();
-                            squareBean.setRefresh(isRefresh);
-                            squareBean.setData(result.getData());
-                            squareBean.getData().setDatas(new ArrayList<>(dataBeans));
-                            mDataBean.setValue(squareBean);
+                            mDataBeans.setValue(result.getData());
                         } else {
                             ToastUtils.showShort(result.getErrorMsg());
                             mErrorMsg.setValue(result.getErrorMsg());
@@ -52,6 +40,6 @@ public class SquareViewModel extends BaseViewModel {
     @Override
     public void reloadData() {
         super.reloadData();
-        getSquareModel(0, true);
+        getSquareModel(0);
     }
 }

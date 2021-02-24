@@ -2,6 +2,7 @@ package com.dbz.wechat.adapter;
 
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.module.LoadMoreModule;
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.dbz.base.config.RouterActivityPath;
@@ -10,7 +11,7 @@ import com.dbz.wechat.databinding.ItemFragmentPagerBinding;
 
 import org.jetbrains.annotations.NotNull;
 
-public class WechatAdapter extends BaseQuickAdapter<WechatFragmentBean.DataBean.DatasBean, BaseViewHolder> {
+public class WechatAdapter extends BaseQuickAdapter<WechatFragmentBean.DataBean.DatasBean, BaseViewHolder> implements LoadMoreModule {
 
     public WechatAdapter(int layoutResId) {
         super(layoutResId);
@@ -22,13 +23,13 @@ public class WechatAdapter extends BaseQuickAdapter<WechatFragmentBean.DataBean.
         ItemFragmentPagerBinding binding = holder.getDataBinding();
         binding.setViewmodel(dataBean);
         binding.executePendingBindings();
-        baseViewHolder.itemView.setOnClickListener(v -> {
+        baseViewHolder.itemView.setOnClickListener(v ->
             ARouter.getInstance()
                     .build(RouterActivityPath.WebView.PAGER_WEB)
                     .withString("url", dataBean.getLink())
                     .withInt("id", dataBean.getId())
                     .withString("title", dataBean.getTitle())
-                    .navigation();
-        });
+                    .navigation()
+        );
     }
 }
