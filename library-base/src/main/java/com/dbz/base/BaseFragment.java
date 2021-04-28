@@ -59,7 +59,6 @@ public abstract class BaseFragment<DB extends ViewDataBinding, VM extends BaseVi
         binding.setLifecycleOwner(this);
         initView(getArguments());
         if (null != mViewModel){
-            LogUtils.e("---------null != mViewModel");
             mViewModel.mErrorMsg.observe(getViewLifecycleOwner(), this::showFailure);
         }
     }
@@ -76,6 +75,13 @@ public abstract class BaseFragment<DB extends ViewDataBinding, VM extends BaseVi
     protected abstract void initView(Bundle bundle);
 
     protected abstract void initData();
+
+    /**
+     * 提供子类方法 在设置布局之前
+     */
+    protected void setWindowConfigure() {
+
+    }
 
     /**
      * 失败重试,重新加载事件
@@ -97,7 +103,7 @@ public abstract class BaseFragment<DB extends ViewDataBinding, VM extends BaseVi
      * 再次可见时，是否重新请求数据，默认为true
      */
     protected boolean isNeedReload() {
-        return false;
+        return true;
     }
 
     public void setLoadSir(View view) {

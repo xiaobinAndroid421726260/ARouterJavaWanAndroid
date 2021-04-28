@@ -1,10 +1,11 @@
 package com.dbz.demo;
 
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -19,15 +20,20 @@ import com.blankj.utilcode.util.SPStaticUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.dbz.base.BaseActivity;
 import com.dbz.base.ScrollToTop;
+import com.dbz.base.ViewColorUtils;
 import com.dbz.base.config.RouterActivityPath;
 import com.dbz.base.config.RouterFragmentPath;
+import com.dbz.base.event.EventTheme;
 import com.dbz.demo.databinding.ActivityMainBinding;
 import com.dbz.home.HomeFragment;
-import com.dbz.network.retrofit.utils.LogUtils;
 import com.dbz.project.ProjectFragment;
 import com.dbz.square.SquareFragment;
 import com.dbz.system.SystemFragment;
 import com.dbz.wechat.WechatFragment;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 @Route(path = RouterActivityPath.Main.PAGER_MAIN)
 public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewModel> {
@@ -48,6 +54,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
     private SystemFragment mSystemFragment;
     private ProjectFragment mProjectFragment;
 
+    private LinearLayout headerLayout;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_main;
@@ -64,11 +72,18 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
     }
 
     @Override
+    protected void setWindowConfigure() {
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
     protected void initView() {
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setTitle("WanAndroid");
         binding.toolbar.setTitleTextColor(Color.WHITE);
-        binding.toolbar.setNavigationIcon(R.drawable.open_drawer);
+        binding.toolbar.setNavigationIcon(R.drawable.open_drawer_white);
         binding.toolbar.setNavigationOnClickListener(v -> mViewModel.openDrawer.setValue(true));
         initFragment();
         initNavigation();
@@ -79,11 +94,23 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                 binding.drawerLayout.closeDrawer(GravityCompat.START);
             }
         });
+        mViewModel.theme.observe(this, aBoolean -> {
+            if (aBoolean){
+                mViewModel.theme.setValue(false);
+                recreateActivity();
+            }
+        });
     }
 
     @Override
     protected void initData() {
+        ViewColorUtils.setToolbarBackColor(this, binding.toolbar, binding.actionButton);
+        headerLayout.setBackgroundColor(getResources().getColor(mThemeColor));
+    }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(EventTheme theme) {
+        mViewModel.theme.setValue(true);
     }
 
     private void initFragment() {
@@ -97,15 +124,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (null != outState){
+        if (null != outState) {
             outState.putInt(BOTTOM_INDEX, index);
         }
-    }
-
-    @Override
-    protected void initStatusColor() {
-        super.initStatusColor();
-        binding.actionButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(mThemeColor)));
     }
 
     private void initNavigation() {
@@ -130,7 +151,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                 ((ScrollToTop) fragment).scrollToTop();
             }
         });
-
+        View view = binding.navigation.getHeaderView(0);
+        headerLayout = view.findViewById(R.id.ll_header_layout);
         binding.navigation.setNavigationItemSelectedListener(item -> {
             if (item.getItemId() == R.id.nav_collect) {
                 ToastUtils.showShort("我的收藏");
@@ -143,14 +165,16 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                 mViewModel.openDrawer.setValue(false);
             } else if (item.getItemId() == R.id.nav_night_mode) {
                 if (SPStaticUtils.getBoolean("switch_nightMode")) {
+//                    textView.setText("夜间模式");
                     SPStaticUtils.put("switch_nightMode", false);
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 } else {
+//                    textView.setText("日间模式");
                     SPStaticUtils.put("switch_nightMode", true);
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 }
-                getWindow().setWindowAnimations(R.style.WindowAnimationFadeInOut);
-                recreate();
+                ViewColorUtils.setToolbarBackColor(this, binding.toolbar, binding.actionButton);
+                recreateActivity();
             } else if (item.getItemId() == R.id.nav_setting) {
                 ARouter.getInstance().build(RouterActivityPath.Setting.PAGER_SETTING).navigation();
                 mViewModel.openDrawer.setValue(false);
@@ -160,6 +184,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
             }
             return true;
         });
+    }
+
+    /**
+     * 重新创建Activity
+     */
+    private void recreateActivity(){
+        getWindow().setWindowAnimations(R.style.WindowAnimationFadeInOut);
+        recreate();
     }
 
     /**

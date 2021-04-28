@@ -14,7 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/BaseAppTheme">
         <activity android:name=".ThemeActivity"/>
-        <activity android:name=".SettingsActivity" />
         <activity
             android:name=".login.SplashActivity"
             android:theme="@style/launchTheme">

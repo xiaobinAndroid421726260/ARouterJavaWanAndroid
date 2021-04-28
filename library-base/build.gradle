@@ -74,6 +74,8 @@ dependencies {
     // 沉浸式状态栏框架
     api 'com.gyf.immersionbar:immersionbar:3.0.0'
     api 'com.gyf.immersionbar:immersionbar-components:3.0.0'
+    // eventbus
+    api 'org.greenrobot:eventbus:3.2.0'
 
     // 替换成最新版本, 需要注意的是api
     // 要与compiler匹配使用，均使用最新版可以保证兼容

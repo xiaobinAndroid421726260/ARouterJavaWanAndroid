@@ -8,22 +8,24 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPStaticUtils;
-import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.dbz.base.config.Constants;
 import com.dbz.base.loadsir.EmptyCallback;
 import com.dbz.base.loadsir.ErrorCallback;
 import com.dbz.base.loadsir.LoadingCallback;
 import com.dbz.base.viewmodel.BaseViewModel;
+import com.dbz.network.retrofit.utils.LogUtils;
 import com.gyf.immersionbar.ImmersionBar;
 import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.core.LoadService;
 import com.kingja.loadsir.core.LoadSir;
+
+import org.greenrobot.eventbus.EventBus;
 
 import me.jessyan.autosize.internal.CustomAdapt;
 
@@ -39,16 +41,20 @@ public abstract class BaseActivity<DB extends ViewDataBinding, VM extends BaseVi
     protected LoadService mLoadService;
 
     private Bundle savedInstanceState;
+    protected int mTheme;
     protected int mThemeColor;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        mTheme = SPStaticUtils.getInt(Constants.theme, R.style.AppTheme_PaleBlue);
+        setTheme(mTheme);
         super.onCreate(savedInstanceState);
         this.savedInstanceState = savedInstanceState;
+        setWindowConfigure();
         binding = DataBindingUtil.setContentView(this, getLayoutId());
-        initStatusColor();
         performDataBinding();
         initView();
+        initStatusColor();
         initToast();
     }
 
@@ -77,7 +83,6 @@ public abstract class BaseActivity<DB extends ViewDataBinding, VM extends BaseVi
 
     }
 
-
     protected abstract int getLayoutId();
 
     /**
@@ -92,6 +97,13 @@ public abstract class BaseActivity<DB extends ViewDataBinding, VM extends BaseVi
     protected abstract void initData();
 
     /**
+     * 提供子类方法 在设置布局之前
+     */
+    protected void setWindowConfigure() {
+
+    }
+
+    /**
      * 失败重试,重新加载事件
      */
     protected void onReloadClick() {
@@ -99,17 +111,21 @@ public abstract class BaseActivity<DB extends ViewDataBinding, VM extends BaseVi
     }
 
     protected void initStatusColor() {
-        if (!SPStaticUtils.getBoolean("nightMode", false)) {
-            mThemeColor = SPStaticUtils.getInt("theme", R.color.colorPrimary);
+        if (!SPStaticUtils.getBoolean(Constants.switch_nightMode, false)) {
+            mThemeColor = SPStaticUtils.getInt(Constants.color, R.color.colorPrimary);
         } else {
             mThemeColor = R.color.colorPrimary;
         }
-        setStatusBarColor(mThemeColor);
         if (getSupportActionBar() != null) {
+            if (mThemeColor == R.color.accent_white) {
+                setStatusBarColor(mThemeColor, true, true);
+            } else {
+                setStatusBarColor(mThemeColor);
+            }
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(mThemeColor)));
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (SPStaticUtils.getBoolean("nav_bar", true)) {
+            if (SPStaticUtils.getBoolean(Constants.nav_bar, true)) {
                 getWindow().setNavigationBarColor(getResources().getColor(mThemeColor));
             }
         }
@@ -140,7 +156,7 @@ public abstract class BaseActivity<DB extends ViewDataBinding, VM extends BaseVi
     }
 
 
-    protected Bundle getSavedInstanceState(){
+    protected Bundle getSavedInstanceState() {
         return savedInstanceState;
     }
 
@@ -170,6 +186,15 @@ public abstract class BaseActivity<DB extends ViewDataBinding, VM extends BaseVi
             if (isNeedReload()) {
                 initData();
             }
+        }
+        initStatusColor();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
         }
     }
 

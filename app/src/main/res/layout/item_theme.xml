@@ -34,6 +34,8 @@
         <TextView
             android:id="@+id/tvThemeColor"
             style="@style/text_color_primary_alpha_50_14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             app:layout_constraintBottom_toBottomOf="@id/tvUserTheme"
             app:layout_constraintStart_toEndOf="@id/flThemeColor"

@@ -11,7 +11,7 @@
     <style name="AppTheme.White" parent="">
         <item name="colorPrimary">@color/accent_white</item>
         <item name="android:colorPrimaryDark">@color/dark_white</item>
-        <item name="colorAccent">@color/accent_green</item>
+        <item name="colorAccent">@color/accent_pale_blue</item>
         <item name="textColorPrimary">@color/color_on_theme_text</item>
     </style>
 

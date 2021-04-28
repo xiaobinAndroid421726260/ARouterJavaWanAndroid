@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.dbz.base.BaseFragment;
 import com.dbz.base.ScrollToTop;
+import com.dbz.base.ViewColorUtils;
 import com.dbz.base.config.RouterFragmentPath;
 import com.dbz.wechat.adapter.WechatFragmentAdapter;
 import com.dbz.wechat.databinding.FragmentWechatBinding;
@@ -57,16 +58,17 @@ public class WechatFragment extends BaseFragment<FragmentWechatBinding, WechatVi
             }
         });
         mViewModel.mDataBean.observe(this, dataBeans -> {
-            if (dataBeans.size() > 0){
+            if (dataBeans.size() > 0) {
                 binding.viewPager.setOffscreenPageLimit(dataBeans.size());
                 mAdapter.addData(dataBeans);
             }
         });
+        mViewModel.getWechatArticle();
     }
 
     @Override
     protected void initData() {
-        mViewModel.getWechatArticle();
+        ViewColorUtils.setTaLayoutViewTextColor(binding.tabLayout);
     }
 
     @Override

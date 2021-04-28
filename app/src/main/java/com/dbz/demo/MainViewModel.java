@@ -8,5 +8,6 @@ public class MainViewModel extends BaseViewModel {
 
     public final MutableLiveData<Boolean> openDrawer = new MutableLiveData<>();
 
+    public final MutableLiveData<Boolean> theme = new MutableLiveData<>();
 
 }

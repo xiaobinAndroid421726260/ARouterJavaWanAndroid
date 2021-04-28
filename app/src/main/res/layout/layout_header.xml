@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll_header_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/colorPrimary"
@@ -26,7 +27,7 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         app:civ_border_width="2dp"
-        app:civ_border_color="@color/white_color"
+        app:civ_border_color="@color/accent_white"
         android:layout_gravity="center_horizontal"
         android:src="@drawable/ic_default_avatar"/>
 

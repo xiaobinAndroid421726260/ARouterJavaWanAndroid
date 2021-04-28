@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.dbz.base.BaseFragment;
 import com.dbz.base.ScrollToTop;
+import com.dbz.base.ViewColorUtils;
 import com.dbz.base.config.RouterFragmentPath;
 import com.dbz.network.retrofit.utils.LogUtils;
 import com.dbz.project.adapter.ProjectFragmentAdapter;
@@ -66,6 +67,7 @@ public class ProjectFragment extends BaseFragment<FragmentProjectBinding, Projec
 
     @Override
     protected void initData() {
+        ViewColorUtils.setTaLayoutViewTextColor(binding.tabLayout);
         mViewModel.getProjectTreeJson();
     }
 

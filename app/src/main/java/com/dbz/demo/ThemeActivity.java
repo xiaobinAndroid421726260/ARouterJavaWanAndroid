@@ -1,5 +1,6 @@
 package com.dbz.demo;
 
+import android.graphics.Color;
 import android.view.View;
 
 import androidx.core.content.ContextCompat;
@@ -12,14 +13,17 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.dbz.base.BaseActivity;
+import com.dbz.base.ViewColorUtils;
+import com.dbz.base.config.Constants;
 import com.dbz.base.config.RouterActivityPath;
+import com.dbz.base.event.EventTheme;
 import com.dbz.base.view.RippleAnimation;
 import com.dbz.base.viewmodel.BaseViewModel;
 import com.dbz.demo.bean.ThemeBean;
 import com.dbz.demo.databinding.ActivityThemeBinding;
 import com.dbz.demo.databinding.ItemThemeBinding;
-import com.gyf.immersionbar.ImmersionBar;
 
+import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -52,35 +56,34 @@ public class ThemeActivity extends BaseActivity<ActivityThemeBinding, BaseViewMo
     protected void initView() {
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setTitle("主题风格");
-        binding.toolbar.setNavigationIcon(R.drawable.ic_arrow_black);
         binding.toolbar.setNavigationOnClickListener(v -> onBackPressed());
         mAdapter = new ThemeAdapter(R.layout.item_theme);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         ((SimpleItemAnimator) binding.recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
         binding.recyclerView.setAdapter(mAdapter);
         mAdapter.setOnItemClickListener((adapter, view, position) -> {
-            if (this.position != position){
-//                RippleAnimation.create().setDuration(1000).start();
+            if (this.position != position) {
+                RippleAnimation.create(view).setDuration(1000).start();
                 mDataBean = mAdapter.getData().get(position);
-                SPStaticUtils.put("theme", mDataBean.getTheme());
+                for (int i = 0; i < mAdapter.getData().size(); i++) {
+                    mAdapter.getData().get(i).setChoose(false);
+                }
                 mDataBean.setChoose(true);
                 mAdapter.setData(position, mDataBean);
-                setStatusBarColor(mDataBean.getColor());
-//                if (mDataBean.getColor() == R.color.accent_white) {
-//                    themeNv.ivBackNavigationBar.imageTintList =
-//                            ColorStateList.valueOf(color(R.color.color_on_theme_text))
-//                    themeNv.tvLeftTitleNavigationBar.textColor = color(R.color.color_on_theme_text)
-//                } else {
-//                    themeNv.ivBackNavigationBar.imageTintList =
-//                            ColorStateList.valueOf(color(R.color.color_theme_text))
-//                    themeNv.tvLeftTitleNavigationBar.textColor = color(R.color.color_theme_text)
-//                }
+                binding.toolbar.setTitleTextColor(mDataBean.getColor() == R.color.accent_white ? Color.BLACK : Color.WHITE);
+                SPStaticUtils.put(Constants.color, mDataBean.getColor());
+                SPStaticUtils.put(Constants.theme, mDataBean.getTheme());
+                ViewColorUtils.setToolbarBackColor(ThemeActivity.this, binding.toolbar, null);
+                EventBus.getDefault().post(new EventTheme(mDataBean.getTheme(), mDataBean.getColor()));
+                mAdapter.notifyDataSetChanged();
+                this.position = position;
             }
         });
     }
 
     @Override
     protected void initData() {
+        ViewColorUtils.setToolbarBackColor(this, binding.toolbar, null);
         mThemes.clear();
         mThemes.add(new ThemeBean(R.color.accent_white, R.style.AppTheme_White, "白色", false));
         mThemes.add(new ThemeBean(R.color.accent_red, R.style.AppTheme_Red, "红色", false));
@@ -93,18 +96,12 @@ public class ThemeActivity extends BaseActivity<ActivityThemeBinding, BaseViewMo
         mThemes.add(new ThemeBean(R.color.accent_purple, R.style.AppTheme_Purple, "紫色", false));
         mThemes.add(new ThemeBean(R.color.accent_brown, R.style.AppTheme_Brown, "棕色", false));
         for (int i = 0; i < mThemes.size(); i++) {
-            if (SPStaticUtils.getInt("theme", -1) == mThemes.get(i).getTheme()){
+            if (SPStaticUtils.getInt(Constants.color, -1) == mThemes.get(i).getColor()) {
                 mThemes.get(i).setChoose(true);
                 position = i;
             }
         }
         mAdapter.setList(mThemes);
-    }
-
-    @Override
-    protected void initStatusColor() {
-        super.initStatusColor();
-
     }
 
     static class ThemeAdapter extends BaseQuickAdapter<ThemeBean, BaseViewHolder> {
@@ -116,7 +113,7 @@ public class ThemeActivity extends BaseActivity<ActivityThemeBinding, BaseViewMo
         @Override
         protected void convert(@NotNull BaseViewHolder baseViewHolder, ThemeBean themeBean) {
             BaseDataBindingHolder<ItemThemeBinding> holder = new BaseDataBindingHolder<>(baseViewHolder.itemView);
-            ItemThemeBinding binding = (ItemThemeBinding) holder.getDataBinding();
+            ItemThemeBinding binding = holder.getDataBinding();
             if (themeBean.getColor() == R.color.accent_white) {
                 binding.flThemeColor.getDelegate()
                         .setBackgroundColor(ContextCompat.getColor(getContext(), R.color.text_color_primary_alpha_50));

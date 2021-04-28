@@ -1,5 +1,6 @@
 package com.dbz.system.know;
 
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 
 import androidx.fragment.app.Fragment;
@@ -8,6 +9,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.dbz.base.BaseActivity;
 import com.dbz.base.ScrollToTop;
+import com.dbz.base.ViewColorUtils;
 import com.dbz.base.config.RouterActivityPath;
 import com.dbz.base.viewmodel.BaseViewModel;
 import com.dbz.network.retrofit.bean.system.SystemBean;
@@ -53,8 +55,8 @@ public class KnowledgeActivity extends BaseActivity<ActivityKnowledgeBinding, Ba
                 mTitle.add(mDataBean.get(i).getName());
             }
         }
+        setSupportActionBar(binding.toolbar);
         binding.toolbar.setTitle(name);
-        binding.toolbar.setTitleTextColor(Color.WHITE);
         KnowAdapter mAdapter = new KnowAdapter(getSupportFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         binding.viewPage.setAdapter(mAdapter);
         binding.viewPage.setOffscreenPageLimit(mDataBean.size());
@@ -86,6 +88,7 @@ public class KnowledgeActivity extends BaseActivity<ActivityKnowledgeBinding, Ba
 
     @Override
     protected void initData() {
-
+        ViewColorUtils.setToolbarBackColor(this, binding.toolbar, binding.actionButton);
+        ViewColorUtils.setTaLayoutViewTextColor(binding.tabLayout);
     }
 }

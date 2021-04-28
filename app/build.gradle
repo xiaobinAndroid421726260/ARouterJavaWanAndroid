@@ -57,4 +57,5 @@ dependencies {
     api project(':library-wechat')
     api project(':library-system')
     api project(':library-project')
+    api project(':library-setting')
 }

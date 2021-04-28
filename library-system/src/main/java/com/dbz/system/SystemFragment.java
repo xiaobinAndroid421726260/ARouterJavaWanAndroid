@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.dbz.base.BaseFragment;
 import com.dbz.base.ScrollToTop;
+import com.dbz.base.ViewColorUtils;
 import com.dbz.base.config.RouterFragmentPath;
 import com.dbz.system.adapter.SystemAdapter;
 import com.dbz.system.databinding.FragmentSystemBinding;
@@ -69,7 +70,7 @@ public class SystemFragment extends BaseFragment<FragmentSystemBinding, SystemVi
 
     @Override
     protected void initData() {
-
+        ViewColorUtils.setTaLayoutViewTextColor(binding.tabLayout);
     }
 
     @Override

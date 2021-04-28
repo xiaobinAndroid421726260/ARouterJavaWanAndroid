@@ -2,7 +2,8 @@
 <resources>
     <color name="colorPrimary">#35464e</color>
     <color name="colorPrimaryDark">#212a2f</color>
-    <color name="colorAccent">@color/Cyan</color>
+<!--    <color name="colorAccent">@color/Cyan</color>-->
+    <color name="colorAccent">#35464e</color>
     <color name="textColorPrimary">#616161</color>
     <color name="viewBackground">@color/Grey800</color>
     <color name="windowBackground">@color/Grey900</color>
@@ -11,6 +12,7 @@
     <color name="mask_color">#111111</color>
 
     <color name="common_color">@color/Grey300</color>
+    <color name="Grey300">#E0E0E0</color>
     <color name="item_title">@color/Grey300</color>
     <color name="item_author">@color/Grey500</color>
     <color name="item_desc">@color/Grey500</color>
@@ -27,15 +29,15 @@
     <color name="color_theme_text">#CCFFFFFF</color>//黑暗主题白色文字
     <color name="color_on_theme_text">#CCFFFFFF</color>//白色
 
-    <color name="accent_red">#ffc53929</color>
-    <color name="accent_pink">#ffd66182</color>
-    <color name="accent_orange">#fff57c00</color>
-    <color name="accent_pale_blue">#ff1976d2</color>
-    <color name="accent_green">#ff0c7e46</color>
-    <color name="accent_cyan">#ff0097a7</color>
-    <color name="accent_indigo">#ff303f9f</color>
-    <color name="accent_purple">#ff7b1fa2</color>
-    <color name="accent_brown">#ff5d4037</color>
+    <color name="accent_red">@color/colorAccent</color>
+    <color name="accent_pink">@color/colorAccent</color>
+    <color name="accent_orange">@color/colorAccent</color>
+    <color name="accent_pale_blue">@color/colorAccent</color>
+    <color name="accent_green">@color/colorAccent</color>
+    <color name="accent_cyan">@color/colorAccent</color>
+    <color name="accent_indigo">@color/colorAccent</color>
+    <color name="accent_purple">@color/colorAccent</color>
+    <color name="accent_brown">@color/colorAccent</color>
     <color name="accent_white">#ff2d2d2d</color>
 
 </resources>

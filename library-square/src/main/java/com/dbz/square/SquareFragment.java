@@ -73,20 +73,6 @@ public class SquareFragment extends BaseFragment<FragmentSquareBinding, SquareVi
                 }
             }
         });
-//        mViewModel.mDataBean.observe(this, dataBeans -> {
-//            if (dataBeans.isRefresh()) {
-//                if (dataBeans.getData().getDatas().size() == 0) {
-//                    showEmpty();
-//                }
-//                binding.refreshLayout.finishRefresh(true);
-//            } else {
-//                loadMoreModule.loadMoreComplete();
-//            }
-//            if (dataBeans.getData().getDatas().size() > 0) {
-//                mAdapter.setList(dataBeans.getData().getDatas());
-//                showContent();
-//            }
-//        });
     }
 
     @Override
