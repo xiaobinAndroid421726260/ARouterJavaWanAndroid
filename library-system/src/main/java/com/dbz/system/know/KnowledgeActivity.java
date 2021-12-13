@@ -57,6 +57,7 @@ public class KnowledgeActivity extends BaseActivity<ActivityKnowledgeBinding, Ba
         }
         setSupportActionBar(binding.toolbar);
         binding.toolbar.setTitle(name);
+        binding.toolbar.setNavigationOnClickListener(v -> onBackPressed());
         KnowAdapter mAdapter = new KnowAdapter(getSupportFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         binding.viewPage.setAdapter(mAdapter);
         binding.viewPage.setOffscreenPageLimit(mDataBean.size());
