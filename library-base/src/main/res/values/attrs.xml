@@ -88,8 +88,4 @@
     <!-- 是否有Ripple效果,api21+有效-->
     <attr name="rv_isRippleEnable" format="boolean" />
 
-    <attr name="colorPrimary" format="color" />
-    <attr name="colorAccent" format="color" />
-    <attr name="textColorPrimary" format="color"/>
-
 </resources>

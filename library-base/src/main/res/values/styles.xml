@@ -4,7 +4,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="android:colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="textColorPrimary">@color/color_theme_text</item>
+<!--        <item name="textColorPrimary">@color/color_theme_text</item>-->
     </style>
 
 <!--    <style name="BaseAppTheme" parent="Theme.AppCompat.Light.NoActionBar">-->
